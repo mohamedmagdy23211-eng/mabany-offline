@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>تسعير بند المحارة</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: #f8f8f8;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    .section-title {
+      font-weight: bold;
+      margin-top: 30px;
+      border-bottom: 3px double #444;
+      padding-bottom: 5px;
+      color: #222;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+      margin-bottom: 20px;
+    }
+    table th, table td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background-color: #eee;
+    }
+    .highlight {
+      background-color: #dff0d8;
+      font-weight: bold;
+    }
+    .note {
+      font-size: 13px;
+      color: #666;
+      margin-top: 10px;
+    }
+    .input-table input {
+      width: 100%;
+      padding: 5px;
+      text-align: center;
+    }
+    .input-wrapper {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      max-width: 400px;
+      margin: auto;
+    }
+    .input-wrapper label {
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<h1>تسعير بند المحارة</h1>
+
+<div class="input-wrapper">
+  <label>الكمية المطلوبة (م²): <input id="quantity" type="number" value="100"></label>
+  <label>سعر الشيكارة (ج): <input id="cement" type="number" value="100"></label>
+  <label>سعر المتر رمل (ج): <input id="sand" type="number" value="60"></label>
+  <label>سعر لفة الفايبر (ج): <input id="fiber" type="number" value="350"></label>
+  <label>سعر اليومية (ج): <input id="labor" type="number" value="400"></label>
+</div>
+
+<button onclick="calculate()">احسب</button>
+
+<h2 class="section-title">تكلفة على المقاول</h2>
+<table>
+  <tr>
+    <th>التكلفة بدون مكسب</th>
+    <th>التكلفة + 15%</th>
+    <th>التكلفة + 25%</th>
+  </tr>
+  <tr>
+    <td id="contractorBase" class="highlight"></td>
+    <td id="contractor15"></td>
+    <td id="contractor25"></td>
+  </tr>
+</table>
+
+<h2 class="section-title">تكلفة على الشركة</h2>
+<table>
+  <tr>
+    <th>تكلفة الخامات</th>
+    <th>متوسط مصنعية</th>
+    <th>إجمالي تكلفة الشركة</th>
+  </tr>
+  <tr>
+    <td id="materialsCost"></td>
+    <td id="avgLaborCost"></td>
+    <td id="totalCompanyCost" class="highlight"></td>
+  </tr>
+</table>
+
+<div class="note">
+  تكلفة المتر على المقاول تشمل المصنعية + التشوين + العدة + متابعة (كوماندا).  
+</div>
+
+<script>
+function calculate() {
+  const quantity = parseFloat(document.getElementById("quantity").value);
+  const cement = parseFloat(document.getElementById("cement").value);
+  const sand = parseFloat(document.getElementById("sand").value);
+  const fiber = parseFloat(document.getElementById("fiber").value);
+  const labor = parseFloat(document.getElementById("labor").value);
+
+  // المقاول
+  const productivity = 23;
+  const baseLabor = labor / productivity;
+  const contractorBase = baseLabor + 4 + 1 + 0.5; // تشوين وعدة وكوماندا
+  const contractor15 = contractorBase * 1.15;
+  const contractor25 = contractorBase * 1.25;
+
+  // الشركة
+  const cementPerM = (6 / 35) * 1.04; 
+  const sandPerM = (1 / 35) * 1.04;
+  const fiberPerM = 1 / 300;
+
+  const materialsCost = cementPerM * cement + sandPerM * sand + fiberPerM * fiber;
+  const avgLabor = (contractor15 + contractor25) / 2;
+  const totalCompany = materialsCost + avgLabor;
+
+  document.getElementById("contractorBase").innerText = contractorBase.toFixed(2) + " ج";
+  document.getElementById("contractor15").innerText = contractor15.toFixed(2) + " ج";
+  document.getElementById("contractor25").innerText = contractor25.toFixed(2) + " ج";
+
+  document.getElementById("materialsCost").innerText = materialsCost.toFixed(2) + " ج";
+  document.getElementById("avgLaborCost").innerText = avgLabor.toFixed(2) + " ج";
+  document.getElementById("totalCompanyCost").innerText = totalCompany.toFixed(2) + " ج";
+}
+</script>
+
+</body>
+</html>
